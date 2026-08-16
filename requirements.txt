@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+groq
+qdrant-client
+datasets
+sentence-transformers
+python-dotenv
+requests
+pydantic
+aiohttp
+langchain-text-splitters
+pandas

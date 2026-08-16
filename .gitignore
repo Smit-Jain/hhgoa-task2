@@ -1,0 +1,20 @@
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Data and Vector Store
+# (We ignore these so you don't accidentally push a 500MB dataset or local vector DB to GitHub)
+qdrant_data/
+*.parquet
+
+# OS generated files
+.DS_Store
+Thumbs.db
