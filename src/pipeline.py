@@ -3,14 +3,18 @@ import json
 import time
 import logging
 import asyncio
+from dotenv import load_dotenv
 from groq import AsyncGroq
 from qdrant_client import AsyncQdrantClient
 from sentence_transformers import SentenceTransformer
 
+# Load environment variables
+load_dotenv()
+
 logger = logging.getLogger(__name__)
 
 # Initialize Groq client
-client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY", "dummy_key"))
+client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY"))
 
 # Initialize embedding model globally to keep it in memory for < 200ms latency
 logger.info("Loading embedding model for pipeline...")
@@ -80,7 +84,7 @@ async def generate_response(query: str, contexts: list, retries: int = 3) -> dic
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": prompt}
                 ],
-                model="llama-3.1-8b-instant",  # Extremely fast LPU inference
+                model="openai/gpt-oss-20b",
                 response_format={"type": "json_object"},
                 temperature=0.1
             )
