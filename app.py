@@ -1,7 +1,7 @@
 import os
 import time
 import logging
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -35,18 +35,21 @@ async def read_root():
     return FileResponse("static/index.html")
 
 @app.post("/ask")
-async def ask_question(audio: UploadFile = File(...)):
+async def ask_question(audio: UploadFile = File(...), override_query: str = Form(None)):
     """
     Endpoint to receive voice input, transcribe it, and return a grounded RAG response.
     """
     start_time = time.time()
     
-    # 1. Speech-to-Text
-    audio_data = await audio.read()
-    try:
-        query = await process_audio(audio_data)
-    except Exception as e:
-        return JSONResponse({"error": f"STT Provider Error: {str(e)}"}, status_code=500)
+    # 1. Speech-to-Text (or prompt chip override)
+    if override_query and override_query.strip():
+        query = override_query.strip()
+    else:
+        audio_data = await audio.read()
+        try:
+            query = await process_audio(audio_data)
+        except Exception as e:
+            return JSONResponse({"error": f"STT Provider Error: {str(e)}"}, status_code=500)
     
     if not query:
         return JSONResponse({"error": "Failed to transcribe audio. Ensure audio is clear."}, status_code=400)

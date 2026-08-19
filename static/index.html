@@ -3,45 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice RAG | HH Goa 2026</title>
+    <title>HACKER HOUSE GOA // VOICE RAG</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">HH GOA | 2026</div>
-            <div class="subtitle">Voice-Enabled RAG Pipeline</div>
+    <!-- Giant Full-Height Vector Palm Trees & Sunset Graphic (Exact HH Goa Illustration Style) -->
+    <div class="goa-backdrop">
+        <!-- Sun with Radiant Rays -->
+        <div class="sunset-container">
+            <div class="giant-sun"></div>
+            <div class="sun-beam b-1"></div>
+            <div class="sun-beam b-2"></div>
+            <div class="sun-beam b-3"></div>
+            <div class="sun-beam b-4"></div>
+            <div class="sun-beam b-5"></div>
+            <div class="sun-beam b-6"></div>
+        </div>
+
+        <!-- Left Giant Detailed Palm Tree SVG -->
+        <svg class="giant-palm palm-svg-left" viewBox="0 0 350 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Curved Trunk with Segments -->
+            <path d="M70 750 C 90 550, 140 380, 240 230" stroke="#111411" stroke-width="26" stroke-linecap="round"/>
+            <path d="M70 750 C 90 550, 140 380, 240 230" stroke="#0a4d2a" stroke-width="18" stroke-linecap="round"/>
+            <!-- Trunk rings -->
+            <path d="M80 670 L 98 678" stroke="#111411" stroke-width="4"/>
+            <path d="M95 590 L 115 598" stroke="#111411" stroke-width="4"/>
+            <path d="M120 490 L 142 498" stroke="#111411" stroke-width="4"/>
+            <path d="M155 390 L 180 396" stroke="#111411" stroke-width="4"/>
+            <path d="M195 300 L 220 304" stroke="#111411" stroke-width="4"/>
+
+            <!-- Coconuts -->
+            <circle cx="230" cy="225" r="14" fill="#ffdf00" stroke="#111411" stroke-width="4"/>
+            <circle cx="250" cy="235" r="14" fill="#0f683a" stroke="#111411" stroke-width="4"/>
+            <circle cx="235" cy="248" r="13" fill="#ff007f" stroke="#111411" stroke-width="4"/>
+
+            <!-- Frond 1 (Top Arch) -->
+            <path d="M240 220 Q 250 80, 140 20" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M240 220 Q 260 90, 140 20 C 180 60, 210 110, 240 220 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 2 (Left Drop) -->
+            <path d="M240 220 Q 150 140, 20 180" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M240 220 Q 140 130, 20 180 C 80 200, 160 210, 240 220 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 3 (Far Left Droop) -->
+            <path d="M240 230 Q 120 220, 10 320" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M240 230 Q 110 210, 10 320 C 70 300, 150 280, 240 230 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 4 (Right Arch) -->
+            <path d="M240 220 Q 310 120, 340 190" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M240 220 Q 320 130, 340 190 C 310 220, 270 230, 240 220 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 5 (Right Droop) -->
+            <path d="M240 230 Q 300 240, 330 350" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M240 230 Q 310 250, 330 350 C 290 320, 260 280, 240 230 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+        </svg>
+
+        <!-- Right Giant Detailed Palm Tree SVG -->
+        <svg class="giant-palm palm-svg-right" viewBox="0 0 350 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Mirrored Trunk -->
+            <path d="M280 750 C 260 550, 210 380, 110 230" stroke="#111411" stroke-width="26" stroke-linecap="round"/>
+            <path d="M280 750 C 260 550, 210 380, 110 230" stroke="#0a4d2a" stroke-width="18" stroke-linecap="round"/>
+            <!-- Rings -->
+            <path d="M270 670 L 252 678" stroke="#111411" stroke-width="4"/>
+            <path d="M255 590 L 235 598" stroke="#111411" stroke-width="4"/>
+            <path d="M230 490 L 208 498" stroke="#111411" stroke-width="4"/>
+            <path d="M195 390 L 170 396" stroke="#111411" stroke-width="4"/>
+            <path d="M155 300 L 130 304" stroke="#111411" stroke-width="4"/>
+
+            <!-- Coconuts -->
+            <circle cx="120" cy="225" r="14" fill="#ffdf00" stroke="#111411" stroke-width="4"/>
+            <circle cx="100" cy="235" r="14" fill="#0f683a" stroke="#111411" stroke-width="4"/>
+            <circle cx="115" cy="248" r="13" fill="#ff007f" stroke="#111411" stroke-width="4"/>
+
+            <!-- Frond 1 (Top Arch) -->
+            <path d="M110 220 Q 100 80, 210 20" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M110 220 Q 90 90, 210 20 C 170 60, 140 110, 110 220 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 2 (Right Drop) -->
+            <path d="M110 220 Q 200 140, 330 180" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M110 220 Q 210 130, 330 180 C 270 200, 190 210, 110 220 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 3 (Far Right Droop) -->
+            <path d="M110 230 Q 230 220, 340 320" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M110 230 Q 240 210, 340 320 C 280 300, 200 280, 110 230 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 4 (Left Arch) -->
+            <path d="M110 220 Q 40 120, 10 190" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M110 220 Q 30 130, 10 190 C 40 220, 80 230, 110 220 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+            <!-- Frond 5 (Left Droop) -->
+            <path d="M110 230 Q 50 240, 20 350" stroke="#ffdf00" stroke-width="6" fill="none"/>
+            <path d="M110 230 Q 40 250, 20 350 C 60 320, 90 280, 110 230 Z" fill="#0a4d2a" stroke="#111411" stroke-width="4"/>
+        </svg>
+    </div>
+
+    <!-- Main Container -->
+    <div class="hh-page">
+        <!-- Top Navbar in 2:47PM Studio Style -->
+        <header class="hh-nav">
+            <div class="studio-logo">
+                2:47PM<br><span>STUDIO</span>
+            </div>
+            <div class="hh-nav-center">
+                <div class="live-pill">
+                    <span class="live-blink"></span>
+                    <span>VOICE RAG &bull; TASK 2</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="hh-apply-badge">SUB-200MS</div>
+            </div>
         </header>
 
-        <main>
-            <div class="mic-container">
-                <button id="mic-btn" class="mic-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                        <line x1="12" y1="19" x2="12" y2="23"></line>
-                        <line x1="8" y1="23" x2="16" y2="23"></line>
-                    </svg>
-                </button>
-                <div id="status-text">Hold to speak (or click to toggle)</div>
+        <!-- Hero Headline in exact HH Goa Typography -->
+        <section class="hh-hero">
+            <h1 class="hh-main-title">
+                HACKER <span class="hindi-goa">गोवा</span> HOUSE
+            </h1>
+            <div class="hh-sub-banner">
+                <span>GOA, INDIA</span>
+                <span class="dot">&bull;</span>
+                <span>OCT 2026</span>
+                <span class="dot">&bull;</span>
+                <span>VOICE-ENABLED RAG PIPELINE</span>
+            </div>
+        </section>
+
+        <!-- Main Interactive Boards (Goa Hanging Boards Style) -->
+        <main class="hh-boards-grid">
+            <!-- Left Hanging Sign: Audio Transceiver -->
+            <div class="sign-board yellow-sign">
+                <div class="sign-hooks">
+                    <div class="hook"></div>
+                    <div class="hook"></div>
+                </div>
+                <div class="sign-inner">
+                    <div class="sign-header-tag">STAGE 01 // AUDIO INPUT</div>
+
+                    <!-- Microphone Button Area -->
+                    <div class="mic-stage">
+                        <button id="mic-btn" class="hh-mic-button" aria-label="Toggle Voice Recording">
+                            <div class="mic-core">
+                                <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                                </svg>
+                                <div class="hh-spinner"></div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div id="status-text" class="hh-status-banner">CLICK TO SPEAK</div>
+
+                    <!-- Sound Wave Equalizer -->
+                    <div class="hh-wave-equalizer" id="wave-container">
+                        <span class="w-bar"></span><span class="w-bar"></span><span class="w-bar"></span>
+                        <span class="w-bar"></span><span class="w-bar"></span><span class="w-bar"></span>
+                        <span class="w-bar"></span><span class="w-bar"></span><span class="w-bar"></span>
+                        <span class="w-bar"></span><span class="w-bar"></span>
+                    </div>
+
+                    <!-- Test Signpost Arrows -->
+                    <div class="signpost-container">
+                        <div class="signpost-title">QUICK TEST ARROWS:</div>
+                        <div class="signpost-chips">
+                            <button class="sign-arrow pink-arrow" data-query="What is the definition of a cell?">
+                                <span>🧬 DEFINE CELL</span>
+                            </button>
+                            <button class="sign-arrow yellow-arrow" data-query="What is photosynthesis?">
+                                <span>🌱 PHOTOSYNTHESIS</span>
+                            </button>
+                            <button class="sign-arrow pink-arrow" data-query="How do airplanes fly?">
+                                <span>✈️ AIRPLANE (OFF-TOPIC)</span>
+                            </button>
+                            <button class="sign-arrow yellow-arrow" data-query="What did I eat for breakfast today?">
+                                <span>🍳 TEST REFUSAL</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div id="output-section" class="hidden">
-                <div class="result-card">
-                    <h3>Transcription</h3>
-                    <p id="transcription-text"></p>
+            <!-- Right Hanging Sign: RAG Synthesis & Guardrails -->
+            <div class="sign-board pink-sign">
+                <div class="sign-hooks">
+                    <div class="hook"></div>
+                    <div class="hook"></div>
                 </div>
-                <div class="result-card highlight">
-                    <h3>Generated Answer</h3>
-                    <p id="answer-text"></p>
-                </div>
-                <div class="metrics">
-                    <span id="latency-metric"></span>
+                <div class="sign-inner">
+                    <div class="sign-header-tag">STAGE 02 // SYNTHESIS &amp; GUARDRAILS</div>
+
+                    <!-- Telemetry Meters -->
+                    <div class="hh-telemetry-strip">
+                        <div class="tele-box">
+                            <span class="tele-label">LATENCY</span>
+                            <span class="tele-value" id="latency-val">-- ms</span>
+                        </div>
+                        <div class="tele-box">
+                            <span class="tele-label">SAFETY POLICY</span>
+                            <span class="tele-badge badge-green" id="badge-safety">
+                                <span id="badge-safety-text">PASSED</span>
+                            </span>
+                        </div>
+                        <div class="tele-box">
+                            <span class="tele-label">CONTEXT GROUNDING</span>
+                            <span class="tele-badge badge-green" id="badge-grounding">
+                                <span id="badge-grounding-text">GROUNDED</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Transcription Result Box -->
+                    <div class="hh-result-box">
+                        <div class="box-tag">TRANSCRIPTION // SPEECH-TO-TEXT</div>
+                        <div class="box-body" id="transcription-text">Awaiting audio transmission...</div>
+                    </div>
+
+                    <!-- Generated Answer Box -->
+                    <div class="hh-result-box highlight-box">
+                        <div class="box-tag">GENERATED ANSWER // GROQ LPU</div>
+                        <div class="box-body answer-body" id="answer-text">
+                            System primed. Click the microphone to ask a voice question.
+                        </div>
+                    </div>
+
+                    <!-- Retrieved Sources Dropdown -->
+                    <div class="hh-sources-drawer">
+                        <button class="drawer-trigger" id="toggle-contexts">
+                            <span>RETRIEVED MSMARCO PASSAGES (<span id="context-count">0</span>)</span>
+                            <span class="drawer-plus" id="chevron">+</span>
+                        </button>
+                        <div class="drawer-content hidden" id="contexts-body">
+                            <div id="contexts-list" class="passages-stream">
+                                <div class="empty-msg">No passages loaded in memory.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
+
+        <!-- Footer Strip -->
+        <footer class="hh-footer">
+            <div class="footer-pills">
+                <span class="fpill yellow-fpill">IN-MEMORY QDRANT</span>
+                <span class="fpill pink-fpill">GROQ LPU ENGINE</span>
+                <span class="fpill yellow-fpill">SARVAM STT</span>
+                <span class="fpill pink-fpill">STRICT GUARDRAILS</span>
+            </div>
+            <div class="footer-credits">
+                HACKER HOUSE GOA 2026 &bull; #RAGInGoa &bull; 2:47 PM STUDIO VIBES 🌴☀️
+            </div>
+        </footer>
     </div>
+
     <script src="/static/app.js"></script>
 </body>
 </html>
