@@ -27,11 +27,11 @@ def init_qdrant():
     
     if qdrant_url and qdrant_api_key:
         logger.info("Connecting to remote Qdrant...")
-        client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+        client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key, timeout=60)
     else:
         logger.info("Connecting to local in-memory Qdrant...")
         # Persist locally for reuse
-        client = QdrantClient(path="./qdrant_data")
+        client = QdrantClient(path="./qdrant_data", timeout=60)
         
     # Create collection if it doesn't exist
     if not client.collection_exists(COLLECTION_NAME):
@@ -137,7 +137,7 @@ def chunk_and_embed():
     logger.info(f"Generated {len(points)} chunks. Computing embeddings...")
     
     # Batch compute embeddings and upload
-    batch_size = 100
+    batch_size = 50
     for i in range(0, len(points), batch_size):
         batch_points = points[i:i+batch_size]
         texts = [p["text"] for p in batch_points]
@@ -157,10 +157,15 @@ def chunk_and_embed():
                 )
             )
             
-        client.upsert(
-            collection_name=COLLECTION_NAME,
-            points=qdrant_points
-        )
+        try:
+            client.upsert(
+                collection_name=COLLECTION_NAME,
+                points=qdrant_points
+            )
+        except Exception as e:
+            logger.error(f"Failed to upsert batch {i} to {i + len(batch_points)}: {e}")
+            continue
+
         if i % 500 == 0:
             logger.info(f"Uploaded {i}/{len(points)} chunks...")
             
