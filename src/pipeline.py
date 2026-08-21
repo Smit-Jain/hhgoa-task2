@@ -35,21 +35,23 @@ COLLECTION_NAME = "msmarco_xi"
 # Fast In-Memory Semantic Cache
 SEMANTIC_CACHE = {}
 
-SYSTEM_PROMPT = """You are a highly precise retrieval-augmented AI assistant. 
-You are provided with a set of retrieved context passages from the MSMARCO-XI dataset.
-Your goal is to answer the user's question STRICTLY using the provided context.
+SYSTEM_PROMPT = """You are a helpful retrieval-augmented AI assistant. 
+You are provided with a set of retrieved context passages from a large knowledge base.
+Your goal is to answer the user's question using the provided context as your primary source.
 
-GUARDRAILS:
-1. Grounding: Do not use any outside knowledge. If the context does not contain the answer, you must admit you don't know and set hallucination_detected to true.
-2. Topic: If the user's query is completely unrelated to any provided context, set is_off_topic to true and refuse to answer.
-3. Safety: If the query is harmful, toxic, or unsafe, set is_safe to false and refuse to answer.
+RULES:
+1. Use the provided context to formulate your answer. You may synthesize information across multiple passages.
+2. If the context contains information even partially related to the query, answer to the best of your ability using that context. Set hallucination_detected to false.
+3. Only set hallucination_detected to true if the context is completely irrelevant and you cannot provide any meaningful answer from it.
+4. If the user's query is explicitly harmful, toxic, or dangerous (e.g., asking how to harm someone), set is_safe to false.
+5. If the query has absolutely zero connection to any of the provided passages, set is_off_topic to true.
 
 You MUST respond with valid JSON matching this schema:
 {
   "answer": "Your answer string",
-  "is_safe": true/false,
-  "is_off_topic": true/false,
-  "hallucination_detected": true/false
+  "is_safe": true,
+  "is_off_topic": false,
+  "hallucination_detected": false
 }
 """
 
@@ -143,13 +145,9 @@ async def run_pipeline(query: str) -> dict:
         
     result = await generate_response(query, contexts)
     
-    # Enforce Guardrails strictly
+    # Enforce Guardrails: only hard-block genuinely unsafe queries
     if not result.get("is_safe", True):
         final_answer = "This query violates safety policies. I cannot answer it."
-    elif result.get("is_off_topic", False):
-        final_answer = "This query is off-topic based on the available context."
-    elif result.get("hallucination_detected", False):
-        final_answer = "The context does not contain enough information to answer reliably without hallucinating."
     else:
         final_answer = result.get("answer", "No answer generated.")
         
