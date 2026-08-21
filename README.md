@@ -92,7 +92,6 @@ Task 2/
 ### 1. Clone the Repository
 ```bash
 git clone <your-repo-url>
-cd "Task 2"
 ```
 
 ### 2. Install Dependencies
@@ -131,21 +130,8 @@ uvicorn app:app --reload
 ```
 Open [http://localhost:8000](http://localhost:8000) in your browser.
 
----
 
-## 🌐 Deploying to Vercel
 
-1. Push the repository to GitHub.
-2. Import the project in [Vercel](https://vercel.com/).
-3. Add the following **Environment Variables** in Vercel Project Settings:
-   - `GROQ_API_KEY`
-   - `SARVAM_API_KEY`
-   - `STT_PROVIDER`
-   - `QDRANT_URL`
-   - `QDRANT_API_KEY`
-4. Deploy. The `vercel.json` is already configured to route all requests through `app.py`.
-
----
 
 ## 📊 Latency Benchmarking
 
