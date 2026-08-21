@@ -1,12 +1,13 @@
 import os
 import time
+import re
 from datasets import load_dataset
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 import logging
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,52 +16,90 @@ load_dotenv()
 
 # Configuration
 DATASET_NAME = "ai4bharat/MSMARCO-XI"
-SUBSET_NAME = "default"  # Using default subset
 COLLECTION_NAME = "msmarco_xi"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 VECTOR_SIZE = 384
-MAX_SAMPLES = 500  # Limiting for quick setup during assignment
+MAX_SAMPLES = 10  # Limiting for quick setup during assignment
+
+class AdvancedSemanticChunker:
+    def __init__(self, max_chars=400, overlap_sentences=1):
+        self.max_chars = max_chars
+        self.overlap_sentences = overlap_sentences
+        
+    def split_into_sentences(self, text):
+        # Semantic split by natural sentence boundaries (ignoring abbreviations when possible)
+        text = text.replace('\n', ' ')
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        return [s.strip() for s in sentences if s.strip()]
+
+    def chunk_text(self, text, query_id, language="en"):
+        sentences = self.split_into_sentences(text)
+        chunks = []
+        current_chunk = []
+        current_length = 0
+        
+        for i, sentence in enumerate(sentences):
+            sentence_len = len(sentence)
+            
+            # If a single sentence exceeds the limit, we have to forcefully split it (fallback)
+            if sentence_len > self.max_chars:
+                if current_chunk:
+                    chunks.append(current_chunk)
+                    current_chunk = []
+                    current_length = 0
+                
+                # Naive split for the oversized sentence
+                for j in range(0, sentence_len, self.max_chars):
+                    chunks.append([sentence[j:j+self.max_chars]])
+                continue
+
+            if current_length + sentence_len <= self.max_chars:
+                current_chunk.append(sentence)
+                current_length += sentence_len + 1
+            else:
+                chunks.append(current_chunk)
+                # Apply semantic overlap: keep the last N sentences for continuity
+                overlap = current_chunk[-self.overlap_sentences:] if self.overlap_sentences > 0 else []
+                current_chunk = overlap + [sentence]
+                current_length = sum(len(s) for s in current_chunk) + len(current_chunk)
+                
+        if current_chunk:
+            chunks.append(current_chunk)
+            
+        # Metadata Enrichment: Inject the Query ID context directly into the semantic space
+        enriched_chunks = []
+        for c in chunks:
+            raw_text = " ".join(c)
+            context_prefix = f"[Context for Query {query_id}] "
+            enriched_chunks.append(context_prefix + raw_text)
+            
+        return enriched_chunks
 
 def init_qdrant():
     qdrant_url = os.getenv("QDRANT_URL")
     qdrant_api_key = os.getenv("QDRANT_API_KEY")
     
-    if qdrant_url and qdrant_api_key:
-        logger.info("Connecting to remote Qdrant...")
-        client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key, timeout=60)
-    else:
-        logger.info("Connecting to local in-memory Qdrant...")
-        # Persist locally for reuse
-        client = QdrantClient(path="./qdrant_data", timeout=60)
+    if not qdrant_url or not qdrant_api_key:
+        raise ValueError("Missing QDRANT_URL or QDRANT_API_KEY in environment variables.")
         
-    # Create collection if it doesn't exist
+    logger.info("Connecting to remote Qdrant Cloud...")
+    client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key, timeout=60)
+        
     if not client.collection_exists(COLLECTION_NAME):
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE),
         )
         logger.info(f"Created collection {COLLECTION_NAME}")
-    else:
-        logger.info(f"Collection {COLLECTION_NAME} already exists.")
-        
     return client
 
 def chunk_and_embed():
     logger.info("Loading Embedding Model...")
     model = SentenceTransformer(EMBEDDING_MODEL)
     
-    # Advanced Chunking Strategy: Recursive Character Splitting with Overlap
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50,
-        length_function=len,
-        is_separator_regex=False,
-    )
-    
+    chunker = AdvancedSemanticChunker(max_chars=400, overlap_sentences=1)
     client = init_qdrant()
     
-    # We bypass the HuggingFace datasets library due to a known hanging bug with nested arrays in MSMARCO-XI streaming.
-    # Instead, we directly fetch the validation Hindi partition (which has English pairs).
     parquet_filename = "hinval.parquet"
     parquet_url = "https://huggingface.co/datasets/ai4bharat/MSMARCO-XI/resolve/main/validation/hinval.parquet"
     
@@ -68,32 +107,18 @@ def chunk_and_embed():
         logger.info(f"Downloading {parquet_filename} from HuggingFace (approx 461MB)...")
         import requests
         response = requests.get(parquet_url, stream=True)
-        total_length = response.headers.get('content-length')
-        
         with open(parquet_filename, "wb") as f:
-            if total_length is None: # no content length header
-                f.write(response.content)
-            else:
-                dl = 0
-                total_length = int(total_length)
-                last_percent = 0
-                for data in response.iter_content(chunk_size=1024*1024): # 1MB chunks
-                    dl += len(data)
-                    f.write(data)
-                    percent = int(100 * dl / total_length)
-                    if percent >= last_percent + 10:
-                        logger.info(f"Download Progress: {percent}%")
-                        last_percent = percent
+            for data in response.iter_content(chunk_size=1024*1024):
+                f.write(data)
         logger.info("Download complete!")
     
     logger.info(f"Loading dataset from {parquet_filename}...")
-    import pandas as pd
     df = pd.read_parquet(parquet_filename).head(MAX_SAMPLES)
     
     points = []
     point_id = 1
     
-    logger.info("Processing and Chunking data...")
+    logger.info("Processing with Advanced Metadata-Aware Semantic Chunking...")
     for index, row in df.iterrows():
         query_id = row.get("query_id", str(index))
         target_lang = row.get("target_lang", "hi")
@@ -104,39 +129,28 @@ def chunk_and_embed():
         is_selected = passages.get("is_selected", [])
         
         for i, (eng, trans, sel) in enumerate(zip(eng_passages, trans_passages, is_selected)):
-            # Chunk English passage
-            eng_chunks = text_splitter.split_text(str(eng))
+            # Process English passage with advanced chunking
+            eng_chunks = chunker.chunk_text(str(eng), query_id, language="en")
             for chunk in eng_chunks:
                 points.append({
                     "id": point_id,
                     "text": chunk,
-                    "metadata": {
-                        "query_id": query_id,
-                        "language": "en",
-                        "is_selected": bool(sel),
-                        "passage_index": i
-                    }
+                    "metadata": {"query_id": query_id, "language": "en", "is_selected": bool(sel), "passage_index": i}
                 })
                 point_id += 1
                 
-            # Chunk Translated passage
-            trans_chunks = text_splitter.split_text(str(trans))
+            # Process Translated passage with advanced chunking
+            trans_chunks = chunker.chunk_text(str(trans), query_id, language=target_lang)
             for chunk in trans_chunks:
                 points.append({
                     "id": point_id,
                     "text": chunk,
-                    "metadata": {
-                        "query_id": query_id,
-                        "language": target_lang,
-                        "is_selected": bool(sel),
-                        "passage_index": i
-                    }
+                    "metadata": {"query_id": query_id, "language": target_lang, "is_selected": bool(sel), "passage_index": i}
                 })
                 point_id += 1
                 
-    logger.info(f"Generated {len(points)} chunks. Computing embeddings...")
+    logger.info(f"Generated {len(points)} highly-contextualized semantic chunks. Computing embeddings...")
     
-    # Batch compute embeddings and upload
     batch_size = 50
     for i in range(0, len(points), batch_size):
         batch_points = points[i:i+batch_size]
@@ -145,31 +159,15 @@ def chunk_and_embed():
         
         qdrant_points = []
         for j, p in enumerate(batch_points):
-            # Combine text into metadata for retrieval context
             meta = p["metadata"]
             meta["text"] = p["text"]
+            qdrant_points.append(PointStruct(id=p["id"], vector=embeddings[j], payload=meta))
             
-            qdrant_points.append(
-                PointStruct(
-                    id=p["id"],
-                    vector=embeddings[j],
-                    payload=meta
-                )
-            )
-            
-        try:
-            client.upsert(
-                collection_name=COLLECTION_NAME,
-                points=qdrant_points
-            )
-        except Exception as e:
-            logger.error(f"Failed to upsert batch {i} to {i + len(batch_points)}: {e}")
-            continue
-
+        client.upsert(collection_name=COLLECTION_NAME, points=qdrant_points)
         if i % 500 == 0:
             logger.info(f"Uploaded {i}/{len(points)} chunks...")
             
-    logger.info(f"Successfully ingested {len(points)} chunks into Qdrant.")
+    logger.info("Successfully ingested chunks into Qdrant.")
 
 if __name__ == "__main__":
     start_time = time.time()

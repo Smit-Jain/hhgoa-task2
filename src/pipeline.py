@@ -6,7 +6,8 @@ import asyncio
 from dotenv import load_dotenv
 from groq import AsyncGroq
 from qdrant_client import AsyncQdrantClient
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
+import hashlib
 
 # Load environment variables
 load_dotenv()
@@ -16,20 +17,23 @@ logger = logging.getLogger(__name__)
 # Initialize Groq client
 client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY"))
 
-# Initialize embedding model globally to keep it in memory for < 200ms latency
-logger.info("Loading embedding model for pipeline...")
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+# Initialize embedding model using fastembed (ONNX-based, ultra-lightweight for Serverless/Vercel)
+logger.info("Loading fastembed model for pipeline...")
+embedder = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-# Qdrant async client
+# Qdrant async client (Strictly Cloud)
 qdrant_url = os.getenv("QDRANT_URL")
 qdrant_api_key = os.getenv("QDRANT_API_KEY")
-if qdrant_url and qdrant_api_key:
-    qclient = AsyncQdrantClient(url=qdrant_url, api_key=qdrant_api_key)
-else:
-    # Using local path for fast retrieval during testing
-    qclient = AsyncQdrantClient(path="./qdrant_data")
+
+if not qdrant_url or not qdrant_api_key:
+    raise ValueError("Missing QDRANT_URL or QDRANT_API_KEY in environment variables.")
+
+qclient = AsyncQdrantClient(url=qdrant_url, api_key=qdrant_api_key)
     
 COLLECTION_NAME = "msmarco_xi"
+
+# Fast In-Memory Semantic Cache
+SEMANTIC_CACHE = {}
 
 SYSTEM_PROMPT = """You are a highly precise retrieval-augmented AI assistant. 
 You are provided with a set of retrieved context passages from the MSMARCO-XI dataset.
@@ -54,7 +58,8 @@ async def retrieve_context(query: str, top_k: int = 3) -> list:
     Retrieves the most relevant chunks from Qdrant using dense vector search.
     """
     start_time = time.time()
-    vector = embedder.encode(query).tolist()
+    embeddings = list(embedder.embed([query]))
+    vector = embeddings[0].tolist()
     
     try:
         results = await qclient.query_points(
@@ -105,6 +110,11 @@ async def generate_response(query: str, contexts: list, retries: int = 3) -> dic
                 }
             await asyncio.sleep(0.1)
 
+def get_cache_key(query: str) -> str:
+    # Lowercase and strip for better semantic normalization
+    normalized = query.lower().strip()
+    return hashlib.md5(normalized.encode()).hexdigest()
+
 async def run_pipeline(query: str) -> dict:
     """
     Orchestrates the retrieval and generation, applying guardrails to the final output.
@@ -112,6 +122,15 @@ async def run_pipeline(query: str) -> dict:
     start_time = time.time()
     if not query.strip():
         return {"error": "Empty query."}
+        
+    cache_key = get_cache_key(query)
+    if cache_key in SEMANTIC_CACHE:
+        logger.info(f"Cache HIT for query: {query}")
+        result = SEMANTIC_CACHE[cache_key]
+        total_latency = (time.time() - start_time) * 1000
+        result["total_latency_ms"] = round(total_latency, 2)
+        result["cached"] = True
+        return result
         
     contexts = await retrieve_context(query)
     
@@ -136,7 +155,7 @@ async def run_pipeline(query: str) -> dict:
         
     total_latency = (time.time() - start_time) * 1000
     
-    return {
+    final_output = {
         "query": query,
         "answer": final_answer,
         "retrieved_contexts": contexts,
@@ -147,3 +166,7 @@ async def run_pipeline(query: str) -> dict:
         },
         "total_latency_ms": round(total_latency, 2)
     }
+    
+    # Populate the Semantic Cache
+    SEMANTIC_CACHE[cache_key] = final_output
+    return final_output

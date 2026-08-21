@@ -2,11 +2,9 @@ fastapi
 uvicorn
 groq
 qdrant-client
-datasets
-sentence-transformers
+fastembed
 python-dotenv
 requests
 pydantic
 aiohttp
-langchain-text-splitters
-pandas
+python-multipart

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HACKER HOUSE GOA // VOICE RAG</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
@@ -97,7 +97,7 @@
         <!-- Top Navbar in 2:47PM Studio Style -->
         <header class="hh-nav">
             <div class="studio-logo">
-                2:47PM<br><span>STUDIO</span>
+                <img src="/static/247-studio.png" alt="2:47PM Studio" style="height: 40px; width: auto;">
             </div>
             <div class="hh-nav-center">
                 <div class="live-pill">
@@ -113,7 +113,9 @@
         <!-- Hero Headline in exact HH Goa Typography -->
         <section class="hh-hero">
             <h1 class="hh-main-title">
-                HACKER <span class="hindi-goa">गोवा</span> HOUSE
+                <span class="hh-text-hacker">HACKER</span>
+                <img src="/static/goa-badge.png" alt="Goa" class="goa-badge-img">
+                <span class="hh-text-house">HOUSE</span>
             </h1>
             <div class="hh-sub-banner">
                 <span>GOA, INDIA</span>
@@ -164,17 +166,17 @@
                     <div class="signpost-container">
                         <div class="signpost-title">QUICK TEST ARROWS:</div>
                         <div class="signpost-chips">
-                            <button class="sign-arrow pink-arrow" data-query="What is the definition of a cell?">
-                                <span>🧬 DEFINE CELL</span>
+                            <button class="sign-arrow pink-arrow" data-query="What is a corporation?">
+                                <span>🏢 CORPORATION</span>
                             </button>
-                            <button class="sign-arrow yellow-arrow" data-query="What is photosynthesis?">
-                                <span>🌱 PHOTOSYNTHESIS</span>
+                            <button class="sign-arrow white-arrow" data-query="Why did Rachel Carson write an obligation to endure?">
+                                <span>📖 RACHEL CARSON</span>
                             </button>
-                            <button class="sign-arrow pink-arrow" data-query="How do airplanes fly?">
-                                <span>✈️ AIRPLANE (OFF-TOPIC)</span>
+                            <button class="sign-arrow pink-arrow" data-query="What is the definition of honesty or integrity?">
+                                <span>⚖️ HONESTY DEF.</span>
                             </button>
-                            <button class="sign-arrow yellow-arrow" data-query="What did I eat for breakfast today?">
-                                <span>🍳 TEST REFUSAL</span>
+                            <button class="sign-arrow white-arrow" data-query="Does medical marijuana help with PTSD?">
+                                <span>🌿 MEDICAL INFO</span>
                             </button>
                         </div>
                     </div>
@@ -218,7 +220,7 @@
 
                     <!-- Generated Answer Box -->
                     <div class="hh-result-box highlight-box">
-                        <div class="box-tag">GENERATED ANSWER // GROQ LPU</div>
+                        <div class="box-tag">GENERATED ANSWER</div>
                         <div class="box-body answer-body" id="answer-text">
                             System primed. Click the microphone to ask a voice question.
                         </div>
@@ -227,7 +229,7 @@
                     <!-- Retrieved Sources Dropdown -->
                     <div class="hh-sources-drawer">
                         <button class="drawer-trigger" id="toggle-contexts">
-                            <span>RETRIEVED MSMARCO PASSAGES (<span id="context-count">0</span>)</span>
+                            <span>PASSAGES (<span id="context-count">0</span>)</span>
                             <span class="drawer-plus" id="chevron">+</span>
                         </button>
                         <div class="drawer-content hidden" id="contexts-body">
@@ -242,12 +244,6 @@
 
         <!-- Footer Strip -->
         <footer class="hh-footer">
-            <div class="footer-pills">
-                <span class="fpill yellow-fpill">IN-MEMORY QDRANT</span>
-                <span class="fpill pink-fpill">GROQ LPU ENGINE</span>
-                <span class="fpill yellow-fpill">SARVAM STT</span>
-                <span class="fpill pink-fpill">STRICT GUARDRAILS</span>
-            </div>
             <div class="footer-credits">
                 HACKER HOUSE GOA 2026 &bull; #RAGInGoa &bull; 2:47 PM STUDIO VIBES 🌴☀️
             </div>

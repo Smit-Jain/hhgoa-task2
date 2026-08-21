@@ -183,18 +183,55 @@ body {
 }
 
 .hh-main-title {
-    font-family: 'Anton', 'Syne', sans-serif;
-    font-size: 4.8rem;
+    font-family: 'Onyx', 'Bodoni MT Condensed', 'Times New Roman', serif;
+    font-size: 15rem;
     text-transform: uppercase;
     color: var(--hh-yellow);
-    letter-spacing: 2px;
-    line-height: 0.95;
-    text-shadow: 4px 4px 0px var(--hh-black);
+    line-height: 0.85;
+    text-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    font-weight: normal;
+    font-stretch: ultra-condensed;
+}
+
+.hh-text-hacker {
+    margin-right: -10px;
+    z-index: 1;
+    background: radial-gradient(circle at 50% 80px, var(--hh-green) 188px, var(--hh-yellow) 190px);
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.hh-text-house {
+    margin-left: -10px;
+    z-index: 1;
+    background: radial-gradient(circle at 50% 80px, var(--hh-green) 188px, var(--hh-yellow) 190px);
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.goa-badge-img {
+    height: 4.5rem;
+    z-index: 10;
+    position: relative;
+    margin: 0 -20px;
+    animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, badgeFloat 3.5s ease-in-out 0.8s infinite;
+}
+
+@keyframes dropIn {
+    0% { transform: translateY(-150px) rotate(-15deg); opacity: 0; }
+    100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes badgeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
 }
 
 .hindi-goa {
@@ -455,7 +492,6 @@ body {
     cursor: pointer;
     text-align: left;
     transition: all 0.15s ease;
-    clip-path: polygon(0% 0%, 93% 0%, 100% 50%, 93% 100%, 0% 100%);
 }
 
 .pink-arrow {
@@ -465,6 +501,11 @@ body {
 
 .yellow-arrow {
     background: var(--hh-yellow);
+    color: var(--hh-black);
+}
+
+.white-arrow {
+    background: #ffffff;
     color: var(--hh-black);
 }
 
